@@ -2,18 +2,18 @@ body{
   margin:0;
   font-family:Arial;
   background:#0b141a;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
   color:white;
 }
 
+/* AUTH */
+
 .auth-box{
+  width:320px;
+  margin:80px auto;
   background:#202c33;
-  padding:30px;
+  padding:25px;
   border-radius:20px;
-  width:300px;
+
   display:flex;
   flex-direction:column;
   gap:15px;
@@ -33,6 +33,61 @@ button{
   border-radius:10px;
   background:#00a884;
   color:white;
-  font-weight:bold;
   cursor:pointer;
+  font-weight:bold;
+}
+
+/* CHAT */
+
+.chat-page{
+  display:none;
+  height:100vh;
+  flex-direction:column;
+}
+
+.topbar{
+  background:#202c33;
+  padding:15px;
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.messages{
+  flex:1;
+  overflow-y:auto;
+  padding:20px;
+
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.message{
+  max-width:70%;
+  padding:12px;
+  border-radius:15px;
+  word-wrap:break-word;
+}
+
+.me{
+  background:#005c4b;
+  align-self:flex-end;
+}
+
+.other{
+  background:#202c33;
+  align-self:flex-start;
+}
+
+.send-box{
+  display:flex;
+  padding:10px;
+  gap:10px;
+  background:#202c33;
+}
+
+.send-box input{
+  flex:1;
 }
