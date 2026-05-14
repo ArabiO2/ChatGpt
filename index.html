@@ -1,54 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
   <title>AuraChat</title>
-  <link rel="stylesheet" href="style.css"/>
+
+  <link rel="stylesheet" href="style.css">
+
 </head>
+
 <body>
 
-<!-- AUTH -->
+<!-- LOGIN -->
 
-<div class="auth-box" id="authBox">
+<div class="auth-page" id="authPage">
 
-  <h1>AuraChat</h1>
+  <div class="auth-box">
 
-  <input type="text" id="username" placeholder="Username">
+    <h1>AuraChat</h1>
 
-  <input type="email" id="email" placeholder="Email">
+    <input
+      type="text"
+      id="username"
+      placeholder="Username"
+    >
 
-  <input type="password" id="password" placeholder="Password">
+    <input
+      type="email"
+      id="email"
+      placeholder="Email"
+    >
 
-  <button id="signupBtn">Create Account</button>
+    <input
+      type="password"
+      id="password"
+      placeholder="Password"
+    >
 
-  <button id="loginBtn">Login</button>
+    <button id="signupBtn">
+      Create Account
+    </button>
+
+    <button id="loginBtn">
+      Login
+    </button>
+
+  </div>
 
 </div>
 
 <!-- CHAT -->
 
-<div class="chat-page" id="chatPage">
+<div class="chat-app" id="chatApp">
 
-  <div class="topbar">
+  <!-- SIDEBAR -->
 
-    <h2>AuraChat</h2>
+  <div class="sidebar">
 
-    <button id="logoutBtn">Logout</button>
+    <div class="sidebar-top">
 
-  </div>
+      <h2>AuraChat</h2>
 
-  <div class="messages" id="messages"></div>
+      <button id="logoutBtn">
+        Logout
+      </button>
 
-  <div class="send-box">
+    </div>
 
     <input
       type="text"
-      id="messageInput"
-      placeholder="Type a message..."
+      id="searchInput"
+      placeholder="Search username..."
     >
 
-    <button id="sendBtn">Send</button>
+    <div
+      class="users-list"
+      id="usersList"
+    ></div>
+
+  </div>
+
+  <!-- CHAT AREA -->
+
+  <div class="chat-area">
+
+    <div class="chat-top">
+
+      <h3 id="chatUsername">
+        Select a user
+      </h3>
+
+    </div>
+
+    <div
+      class="messages"
+      id="messages"
+    ></div>
+
+    <div class="send-box">
+
+      <input
+        type="text"
+        id="messageInput"
+        placeholder="Type message..."
+      >
+
+      <button id="sendBtn">
+        Send
+      </button>
+
+    </div>
 
   </div>
 
