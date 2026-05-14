@@ -21,9 +21,7 @@ import {
 
   push,
 
-  onValue,
-
-  get
+  onValue
 
 } from
 "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -51,7 +49,7 @@ const usersList =
 const sendBtn =
   document.getElementById("sendBtn");
 
-const messages =
+const messagesDiv =
   document.getElementById("messages");
 
 const messageInput =
@@ -67,7 +65,7 @@ const searchInput =
 
 let currentChatUser = null;
 
-/* SIGNUP */
+/* SIGN UP */
 
 signupBtn.onclick = async ()=>{
 
@@ -92,16 +90,13 @@ signupBtn.onclick = async ()=>{
     await set(
       ref(db, "users/" + userCred.user.uid),
       {
-
         uid:userCred.user.uid,
-
         username,
-
         email
       }
     );
 
-    alert("Account created!");
+    alert("Account Created");
 
   }catch(err){
 
@@ -133,7 +128,7 @@ loginBtn.onclick = async ()=>{
   }
 };
 
-/* AUTH */
+/* AUTH STATE */
 
 onAuthStateChanged(auth, (user)=>{
 
@@ -159,23 +154,23 @@ function loadUsers(){
 
   const usersRef = ref(db, "users");
 
-  onValue(usersRef, async(snapshot)=>{
+  onValue(usersRef, (snapshot)=>{
 
     usersList.innerHTML = "";
 
     const data = snapshot.val();
 
-    for(let uid in data){
+    if(!data) return;
 
-      if(uid === auth.currentUser.uid)
-        continue;
+    Object.values(data).forEach((user)=>{
 
-      const user = data[uid];
+      if(user.uid === auth.currentUser.uid)
+        return;
 
       const div =
         document.createElement("div");
 
-      div.classList.add("user");
+      div.className = "user";
 
       div.innerHTML = `
         <b>${user.username}</b>
@@ -192,7 +187,7 @@ function loadUsers(){
       };
 
       usersList.appendChild(div);
-    }
+    });
   });
 }
 
@@ -200,19 +195,26 @@ function loadUsers(){
 
 function getChatId(uid1, uid2){
 
-  return [uid1, uid2].sort().join("_");
+  return [uid1, uid2]
+    .sort()
+    .join("_");
 }
 
-/* SEND */
+/* SEND MESSAGE */
 
 sendBtn.onclick = async ()=>{
 
-  if(!currentChatUser) return;
+  if(!currentChatUser){
+
+    alert("Select a user first");
+
+    return;
+  }
 
   const text =
-    messageInput.value;
+    messageInput.value.trim();
 
-  if(text.trim() === "")
+  if(text === "")
     return;
 
   const chatId = getChatId(
@@ -231,7 +233,8 @@ sendBtn.onclick = async ()=>{
 
     text,
 
-    sender: auth.currentUser.uid,
+    sender:
+      auth.currentUser.uid,
 
     time:
       now.toLocaleTimeString(),
@@ -239,7 +242,8 @@ sendBtn.onclick = async ()=>{
     date:
       now.toLocaleDateString(),
 
-    timestamp: Date.now()
+    timestamp:
+      Date.now()
   });
 
   messageInput.value = "";
@@ -259,15 +263,15 @@ function loadMessages(){
   const messagesRef =
     ref(db, "messages/" + chatId);
 
-  onValue(messagesRef, async(snapshot)=>{
+  onValue(messagesRef, (snapshot)=>{
 
-    messages.innerHTML = "";
+    messagesDiv.innerHTML = "";
 
     const data = snapshot.val();
 
-    for(let id in data){
+    if(!data) return;
 
-      const msg = data[id];
+    Object.values(data).forEach((msg)=>{
 
       const div =
         document.createElement("div");
@@ -298,11 +302,11 @@ function loadMessages(){
         </div>
       `;
 
-      messages.appendChild(div);
-    }
+      messagesDiv.appendChild(div);
+    });
 
-    messages.scrollTop =
-      messages.scrollHeight;
+    messagesDiv.scrollTop =
+      messagesDiv.scrollHeight;
   });
 }
 
