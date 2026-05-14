@@ -101,7 +101,10 @@ button.secondary:hover { background: #2a3942; }
   display: flex; /* هنخلي الـ JS يتحكم في إظهارها بس هي Flex أساساً */
   height: 100vh;
   width: 100%;
-  position: relative;
+  position: fixed;
+  top :0;
+  left :0;
+  overflow:hidden; 
 }
 
 /* =====================
@@ -167,18 +170,21 @@ button.secondary:hover { background: #2a3942; }
   flex: 1;
   display: flex;
   flex-direction: column;
+  height:100vh;   
   min-width: 0;
   position: relative;
   background: #0b141a;
 }
 
 .chat-top {
-  padding: 15px 20px;
+  padding: 10px 15px;
   background: #202c33;
   border-bottom: 1px solid #1f2c33;
-  min-height: 65px;
+  height: 60px;
   display: flex;
   align-items: center;
+  flex-shrink:0;
+  z-index:10;  
 }
 
 /* MESSAGES */
@@ -189,7 +195,7 @@ button.secondary:hover { background: #2a3942; }
   display: flex;
   flex-direction: column;
   gap: 12px;
-  /* لو حابب تحط خلفية واتساب الخفيفة مستقبلاً هنا مكانها */
+  -webkit-overflow-scrolling: touch ;    /* لو حابب تحط خلفية واتساب الخفيفة مستقبلاً هنا مكانها */
 }
 
 .message {
@@ -243,8 +249,11 @@ button.secondary:hover { background: #2a3942; }
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 20px;
+  padding: 10px 15px;
   background: #202c33;
+  min-height:62px ;
+  flex-shrink:0;
+  border-top:1px solid #1f2c33;
 }
 
 .attach-btn {
@@ -309,7 +318,12 @@ button.secondary:hover { background: #2a3942; }
   border: none;
   font-size: 24px;
 }
-
+@media (max-width: 768px) {
+  .menu-btn {
+    top :12px;
+    
+  } 
+} 
 /* =====================
    MOBILE RESPONSIVE (الموبايل)
 ===================== */
