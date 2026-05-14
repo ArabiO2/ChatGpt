@@ -1,42 +1,75 @@
 import { auth, db } from "./firebase.js";
 
 import {
+
   createUserWithEmailAndPassword,
+
   signInWithEmailAndPassword,
+
   onAuthStateChanged,
+
   signOut
+
 } from
 "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
-  doc,
-  setDoc,
-  collection,
-  addDoc,
-  query,
-  orderBy,
-  onSnapshot,
-  serverTimestamp
+
+  ref,
+
+  set,
+
+  push,
+
+  onValue,
+
+  get
+
 } from
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 /* ELEMENTS */
 
-const authBox = document.getElementById("authBox");
-const chatPage = document.getElementById("chatPage");
+const authPage =
+  document.getElementById("authPage");
 
-const signupBtn = document.getElementById("signupBtn");
-const loginBtn = document.getElementById("loginBtn");
+const chatApp =
+  document.getElementById("chatApp");
 
-const logoutBtn = document.getElementById("logoutBtn");
+const signupBtn =
+  document.getElementById("signupBtn");
 
-const sendBtn = document.getElementById("sendBtn");
+const loginBtn =
+  document.getElementById("loginBtn");
 
-const messagesDiv = document.getElementById("messages");
+const logoutBtn =
+  document.getElementById("logoutBtn");
 
-/* SIGN UP */
+const usersList =
+  document.getElementById("usersList");
 
-signupBtn.onclick = async () => {
+const sendBtn =
+  document.getElementById("sendBtn");
+
+const messages =
+  document.getElementById("messages");
+
+const messageInput =
+  document.getElementById("messageInput");
+
+const chatUsername =
+  document.getElementById("chatUsername");
+
+const searchInput =
+  document.getElementById("searchInput");
+
+/* GLOBAL */
+
+let currentChatUser = null;
+
+/* SIGNUP */
+
+signupBtn.onclick = async ()=>{
 
   const username =
     document.getElementById("username").value;
@@ -56,25 +89,29 @@ signupBtn.onclick = async () => {
         password
       );
 
-    await setDoc(
-      doc(db, "users", userCred.user.uid),
+    await set(
+      ref(db, "users/" + userCred.user.uid),
       {
+
+        uid:userCred.user.uid,
+
         username,
-        email,
-        uid:userCred.user.uid
+
+        email
       }
     );
 
     alert("Account created!");
 
   }catch(err){
+
     alert(err.message);
   }
 };
 
 /* LOGIN */
 
-loginBtn.onclick = async () => {
+loginBtn.onclick = async ()=>{
 
   const email =
     document.getElementById("email").value;
@@ -91,76 +128,155 @@ loginBtn.onclick = async () => {
     );
 
   }catch(err){
+
     alert(err.message);
   }
 };
 
-/* AUTH STATE */
+/* AUTH */
 
 onAuthStateChanged(auth, (user)=>{
 
   if(user){
 
-    authBox.style.display = "none";
+    authPage.style.display = "none";
 
-    chatPage.style.display = "flex";
+    chatApp.style.display = "flex";
 
-    loadMessages();
+    loadUsers();
 
   }else{
 
-    authBox.style.display = "flex";
+    authPage.style.display = "flex";
 
-    chatPage.style.display = "none";
+    chatApp.style.display = "none";
   }
 });
 
-/* SEND MESSAGE */
+/* LOAD USERS */
+
+function loadUsers(){
+
+  const usersRef = ref(db, "users");
+
+  onValue(usersRef, async(snapshot)=>{
+
+    usersList.innerHTML = "";
+
+    const data = snapshot.val();
+
+    for(let uid in data){
+
+      if(uid === auth.currentUser.uid)
+        continue;
+
+      const user = data[uid];
+
+      const div =
+        document.createElement("div");
+
+      div.classList.add("user");
+
+      div.innerHTML = `
+        <b>${user.username}</b>
+      `;
+
+      div.onclick = ()=>{
+
+        currentChatUser = user;
+
+        chatUsername.innerText =
+          user.username;
+
+        loadMessages();
+      };
+
+      usersList.appendChild(div);
+    }
+  });
+}
+
+/* CHAT ID */
+
+function getChatId(uid1, uid2){
+
+  return [uid1, uid2].sort().join("_");
+}
+
+/* SEND */
 
 sendBtn.onclick = async ()=>{
 
+  if(!currentChatUser) return;
+
   const text =
-    document.getElementById("messageInput").value;
+    messageInput.value;
 
-  if(text.trim() === "") return;
+  if(text.trim() === "")
+    return;
 
-  await addDoc(collection(db, "messages"), {
+  const chatId = getChatId(
+
+    auth.currentUser.uid,
+
+    currentChatUser.uid
+  );
+
+  const messagesRef =
+    ref(db, "messages/" + chatId);
+
+  const now = new Date();
+
+  await push(messagesRef, {
 
     text,
 
-    uid: auth.currentUser.uid,
+    sender: auth.currentUser.uid,
 
-    email: auth.currentUser.email,
+    time:
+      now.toLocaleTimeString(),
 
-    createdAt: serverTimestamp()
+    date:
+      now.toLocaleDateString(),
 
+    timestamp: Date.now()
   });
 
-  document.getElementById("messageInput").value = "";
+  messageInput.value = "";
 };
 
 /* LOAD MESSAGES */
 
 function loadMessages(){
 
-  const q = query(
-    collection(db, "messages"),
-    orderBy("createdAt")
+  const chatId = getChatId(
+
+    auth.currentUser.uid,
+
+    currentChatUser.uid
   );
 
-  onSnapshot(q, (snapshot)=>{
+  const messagesRef =
+    ref(db, "messages/" + chatId);
 
-    messagesDiv.innerHTML = "";
+  onValue(messagesRef, async(snapshot)=>{
 
-    snapshot.forEach((doc)=>{
+    messages.innerHTML = "";
 
-      const msg = doc.data();
+    const data = snapshot.val();
 
-      const div = document.createElement("div");
+    for(let id in data){
+
+      const msg = data[id];
+
+      const div =
+        document.createElement("div");
 
       div.classList.add("message");
 
-      if(msg.uid === auth.currentUser.uid){
+      if(
+        msg.sender === auth.currentUser.uid
+      ){
 
         div.classList.add("me");
 
@@ -170,17 +286,52 @@ function loadMessages(){
       }
 
       div.innerHTML = `
-        <b>${msg.email}</b><br>
+
         ${msg.text}
+
+        <div class="time">
+
+          ${msg.time}
+          <br>
+          ${msg.date}
+
+        </div>
       `;
 
-      messagesDiv.appendChild(div);
-    });
+      messages.appendChild(div);
+    }
 
-    messagesDiv.scrollTop =
-      messagesDiv.scrollHeight;
+    messages.scrollTop =
+      messages.scrollHeight;
   });
 }
+
+/* SEARCH */
+
+searchInput.oninput = ()=>{
+
+  const value =
+    searchInput.value.toLowerCase();
+
+  const users =
+    document.querySelectorAll(".user");
+
+  users.forEach((user)=>{
+
+    if(
+      user.innerText
+      .toLowerCase()
+      .includes(value)
+    ){
+
+      user.style.display = "block";
+
+    }else{
+
+      user.style.display = "none";
+    }
+  });
+};
 
 /* LOGOUT */
 
