@@ -286,6 +286,12 @@ searchInput.oninput = () => {
     u.style.display = u.innerText.toLowerCase().includes(val) ? "flex" : "none";
   });
 };
+// تحسين الرؤية عند فتح الكيبورد في الموبايل
+messageInput.addEventListener("focus", () => {
+  setTimeout(() => {
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }, 300);
+});
 
 /* =====================
    LOGOUT
