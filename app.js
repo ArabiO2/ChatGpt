@@ -11,11 +11,12 @@ import {
   ref,
   set,
   push,
-  onValue,
-  get
+  onValue
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-/* ELEMENTS */
+/* =====================
+   ELEMENTS
+===================== */
 
 const authPage = document.getElementById("authPage");
 const chatApp = document.getElementById("chatApp");
@@ -34,108 +35,106 @@ const chatUsername = document.getElementById("chatUsername");
 const logoutBtn = document.getElementById("logoutBtn");
 const toggleSidebar = document.getElementById("toggleSidebar");
 
-/* STATE */
+/* =====================
+   STATE
+===================== */
 
 let currentUser = null;
 let currentChat = null;
+let currentChatId = null;
 
-/* TOGGLE SIDEBAR */
+/* =====================
+   SIDEBAR TOGGLE (mobile)
+===================== */
 
 toggleSidebar.onclick = () => {
   document.querySelector(".sidebar").classList.toggle("hidden");
 };
 
-/* AUTH */
+/* =====================
+   AUTH
+===================== */
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
     currentUser = user;
     authPage.style.display = "none";
     chatApp.style.display = "flex";
-    loadUsers();
+    loadChats();
   } else {
+    currentUser = null;
     authPage.style.display = "flex";
     chatApp.style.display = "none";
   }
 });
 
-/* USERS */
+/* =====================
+   CHAT ID
+===================== */
 
-function loadUsers() {
-  const usersRef = ref(db, "users");
+function chatId(a, b) {
+  return [a, b].sort().join("_");
+}
 
-  onValue(usersRef, (snap) => {
+/* =====================
+   LOAD CHATS (NOT USERS)
+===================== */
+
+function loadChats() {
+  const lastRef = ref(db, "lastChats");
+
+  onValue(lastRef, (snap) => {
     usersList.innerHTML = "";
 
     const data = snap.val();
     if (!data) return;
 
-    Object.values(data).forEach((u) => {
-      if (u.uid === currentUser.uid) return;
+    const chats = Object.entries(data)
+      .filter(([_, c]) => c.users.includes(currentUser.uid))
+      .sort((a, b) => b[1].time - a[1].time);
 
-      const div = document.createElement("div");
-      div.className = "user";
-      div.innerText = u.username;
+    chats.forEach(([id, chat]) => {
 
-      div.onclick = () => {
-        currentChat = u;
-        chatUsername.innerText = u.username;
-        loadMessages();
-      };
+      const otherUid = chat.users.find(u => u !== currentUser.uid);
 
-      usersList.appendChild(div);
+      /* get username */
+      const userRef = ref(db, "users/" + otherUid);
+
+      onValue(userRef, (uSnap) => {
+
+        const u = uSnap.val();
+        if (!u) return;
+
+        const div = document.createElement("div");
+        div.className = "user";
+
+        div.innerHTML = `
+          <b>${u.username}</b>
+          <div style="font-size:11px;opacity:.7">
+            ${chat.lastMessage || "Photo"}
+          </div>
+        `;
+
+        div.onclick = () => {
+          currentChat = u;
+          chatUsername.innerText = u.username;
+          openChat(otherUid);
+        };
+
+        usersList.appendChild(div);
+      });
     });
   });
 }
 
-/* CHAT ID */
+/* =====================
+   OPEN CHAT
+===================== */
 
-function chatId(uid1, uid2) {
-  return [uid1, uid2].sort().join("_");
-}
+function openChat(otherUid) {
+  currentChatId = chatId(currentUser.uid, otherUid);
 
-/* SEND */
-
-sendBtn.onclick = async () => {
-  if (!currentChat) return;
-
-  const text = messageInput.value.trim();
-  const file = imageInput.files[0];
-
-  const id = chatId(currentUser.uid, currentChat.uid);
-
-  const msgRef = ref(db, "messages/" + id);
-
-  const data = {
-    sender: currentUser.uid,
-    text: text || "",
-    time: new Date().toLocaleTimeString(),
-    ts: Date.now()
-  };
-
-  /* IMAGE SUPPORT */
-  if (file) {
-    const reader = new FileReader();
-
-    reader.onload = async () => {
-      data.image = reader.result;
-      await push(msgRef, data);
-    };
-
-    reader.readAsDataURL(file);
-  } else {
-    await push(msgRef, data);
-  }
-
-  messageInput.value = "";
-  imageInput.value = "";
-};
-
-/* LOAD MESSAGES */
-
-function loadMessages() {
-  const id = chatId(currentUser.uid, currentChat.uid);
-  const msgRef = ref(db, "messages/" + id);
+  const msgRef = ref(db, "messages/" + currentChatId);
 
   onValue(msgRef, (snap) => {
     messagesDiv.innerHTML = "";
@@ -143,7 +142,6 @@ function loadMessages() {
     const data = snap.val();
     if (!data) return;
 
-    /* SORT BY TIME */
     const sorted = Object.values(data).sort((a, b) => a.ts - b.ts);
 
     sorted.forEach((m) => {
@@ -167,7 +165,58 @@ function loadMessages() {
   });
 }
 
-/* SEARCH */
+/* =====================
+   SEND MESSAGE
+===================== */
+
+sendBtn.onclick = async () => {
+  if (!currentChatId) return;
+
+  const text = messageInput.value.trim();
+  const file = imageInput.files[0];
+
+  const msgRef = ref(db, "messages/" + currentChatId);
+
+  const data = {
+    sender: currentUser.uid,
+    text: text || "",
+    time: new Date().toLocaleTimeString(),
+    ts: Date.now()
+  };
+
+  if (file) {
+    const reader = new FileReader();
+
+    reader.onload = async () => {
+      data.image = reader.result;
+      await push(msgRef, data);
+
+      await set(ref(db, "lastChats/" + currentChatId), {
+        users: [currentUser.uid, currentChat.uid],
+        lastMessage: "📷 Photo",
+        time: Date.now()
+      });
+    };
+
+    reader.readAsDataURL(file);
+
+  } else {
+    await push(msgRef, data);
+
+    await set(ref(db, "lastChats/" + currentChatId), {
+      users: [currentUser.uid, currentChat.uid],
+      lastMessage: text,
+      time: Date.now()
+    });
+  }
+
+  messageInput.value = "";
+  imageInput.value = "";
+};
+
+/* =====================
+   SEARCH CHATS
+===================== */
 
 searchInput.oninput = () => {
   const val = searchInput.value.toLowerCase();
@@ -179,6 +228,8 @@ searchInput.oninput = () => {
   });
 };
 
-/* LOGOUT */
+/* =====================
+   LOGOUT
+===================== */
 
 logoutBtn.onclick = () => signOut(auth);
