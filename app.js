@@ -1,224 +1,151 @@
 import { auth, db } from "./firebase.js";
 
 import {
-
   createUserWithEmailAndPassword,
-
   signInWithEmailAndPassword,
-
   onAuthStateChanged,
-
   signOut
-
-} from
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
-
   ref,
-
   set,
-
   push,
+  onValue
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-  onValue,
+/* =======================
+   ELEMENTS
+======================= */
 
-  off
+const authPage = document.getElementById("authPage");
+const chatApp = document.getElementById("chatApp");
 
-} from
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+const signupBtn = document.getElementById("signupBtn");
+const loginBtn = document.getElementById("loginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
 
-/* ELEMENTS */
+const usersList = document.getElementById("usersList");
+const messagesDiv = document.getElementById("messages");
 
-const authPage =
-  document.getElementById("authPage");
+const messageInput = document.getElementById("messageInput");
+const sendBtn = document.getElementById("sendBtn");
 
-const chatApp =
-  document.getElementById("chatApp");
+const chatUsername = document.getElementById("chatUsername");
+const searchInput = document.getElementById("searchInput");
 
-const signupBtn =
-  document.getElementById("signupBtn");
+/* =======================
+   GLOBAL STATE
+======================= */
 
-const loginBtn =
-  document.getElementById("loginBtn");
-
-const logoutBtn =
-  document.getElementById("logoutBtn");
-
-const usersList =
-  document.getElementById("usersList");
-
-const sendBtn =
-  document.getElementById("sendBtn");
-
-const messagesDiv =
-  document.getElementById("messages");
-
-const messageInput =
-  document.getElementById("messageInput");
-
-const chatUsername =
-  document.getElementById("chatUsername");
-
-const searchInput =
-  document.getElementById("searchInput");
-
-/* GLOBAL */
-
+let currentUser = null;
 let currentChatUser = null;
-
 let currentMessagesRef = null;
 
-/* SIGNUP */
+/* =======================
+   SIGN UP
+======================= */
 
-signupBtn.onclick = async ()=>{
+signupBtn.onclick = async () => {
 
-  const username =
-    document.getElementById("username")
-    .value
-    .trim();
+  const username = document.getElementById("username").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
 
-  const email =
-    document.getElementById("email")
-    .value
-    .trim();
-
-  const password =
-    document.getElementById("password")
-    .value
-    .trim();
-
-  if(
-    !username ||
-    !email ||
-    !password
-  ){
-
+  if (!username || !email || !password) {
     alert("Fill all fields");
-
     return;
   }
 
-  try{
+  try {
+    const userCred = await createUserWithEmailAndPassword(auth, email, password);
 
-    const userCred =
-      await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-    await set(
-
-      ref(
-        db,
-        "users/" + userCred.user.uid
-      ),
-
-      {
-        uid:userCred.user.uid,
-        username,
-        email
-      }
-    );
+    await set(ref(db, "users/" + userCred.user.uid), {
+      uid: userCred.user.uid,
+      username,
+      email
+    });
 
     alert("Account Created");
-
-  }catch(err){
-
+  } catch (err) {
     alert(err.message);
   }
 };
 
-/* LOGIN */
+/* =======================
+   LOGIN
+======================= */
 
-loginBtn.onclick = async ()=>{
+loginBtn.onclick = async () => {
 
-  const email =
-    document.getElementById("email")
-    .value
-    .trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
 
-  const password =
-    document.getElementById("password")
-    .value
-    .trim();
-
-  try{
-
-    await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-
-  }catch(err){
-
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (err) {
     alert(err.message);
   }
 };
 
-/* AUTH */
+/* =======================
+   AUTH STATE
+======================= */
 
-onAuthStateChanged(auth, (user)=>{
+onAuthStateChanged(auth, (user) => {
 
-  if(user){
+  if (user) {
+
+    currentUser = user;
 
     authPage.style.display = "none";
-
     chatApp.style.display = "flex";
 
     loadUsers();
 
-  }else{
+  } else {
+
+    currentUser = null;
 
     authPage.style.display = "flex";
-
     chatApp.style.display = "none";
   }
 });
 
-/* LOAD USERS */
+/* =======================
+   LOAD USERS (HIDDEN BY DEFAULT)
+======================= */
 
-function loadUsers(){
+function loadUsers() {
 
   const usersRef = ref(db, "users");
 
-  onValue(usersRef, (snapshot)=>{
+  onValue(usersRef, (snapshot) => {
 
     usersList.innerHTML = "";
 
     const data = snapshot.val();
 
-    if(!data) return;
+    if (!data) return;
 
-    Object.values(data).forEach((user)=>{
+    Object.values(data).forEach((user) => {
 
-      if(user.uid === auth.currentUser.uid)
-        return;
+      if (user.uid === currentUser.uid) return;
 
-      if(!user.username)
-        return;
-
-      const div =
-        document.createElement("div");
-
+      const div = document.createElement("div");
       div.className = "user";
 
-      div.innerHTML = `
+      div.style.display = "none"; // ❌ hidden by default
 
-        <b>${user.username}</b>
+      div.innerHTML = `<b>${user.username}</b>`;
 
-      `;
-
-      div.onclick = ()=>{
+      div.onclick = () => {
 
         currentChatUser = user;
-
-        chatUsername.innerText =
-          user.username;
+        chatUsername.innerText = user.username;
 
         loadMessages();
+
       };
 
       usersList.appendChild(div);
@@ -226,167 +153,136 @@ function loadUsers(){
   });
 }
 
-/* CHAT ID */
+/* =======================
+   SEARCH USERS (ONLY SHOW WHEN TYPING)
+======================= */
 
-function getChatId(uid1, uid2){
+searchInput.oninput = () => {
 
-  return [uid1, uid2]
-    .sort()
-    .join("_");
+  const value = searchInput.value.trim().toLowerCase();
+
+  const users = document.querySelectorAll(".user");
+
+  users.forEach((u) => {
+
+    const text = u.innerText.toLowerCase();
+
+    if (value === "") {
+      u.style.display = "none";
+    } else if (text.includes(value)) {
+      u.style.display = "block";
+    } else {
+      u.style.display = "none";
+    }
+  });
+};
+
+/* =======================
+   CHAT ID
+======================= */
+
+function getChatId(uid1, uid2) {
+  return [uid1, uid2].sort().join("_");
 }
 
-/* SEND MESSAGE */
+/* =======================
+   SEND MESSAGE
+======================= */
 
-sendBtn.onclick = async ()=>{
+sendBtn.onclick = async () => {
 
-  if(!currentChatUser){
-
-    alert("Select a user");
-
+  if (!currentChatUser) {
+    alert("Select user first");
     return;
   }
 
-  const text =
-    messageInput.value.trim();
+  const text = messageInput.value.trim();
 
-  if(text === "")
-    return;
+  if (!text) return;
 
-  const chatId = getChatId(
+  const chatId = getChatId(currentUser.uid, currentChatUser.uid);
 
-    auth.currentUser.uid,
-
-    currentChatUser.uid
-  );
-
-  const messagesRef =
-    ref(db, "messages/" + chatId);
+  const messagesRef = ref(db, "messages/" + chatId);
 
   const now = new Date();
 
   await push(messagesRef, {
 
     text,
+    sender: currentUser.uid,
 
-    sender:
-      auth.currentUser.uid,
+    time: now.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit"
+    }),
 
-    time:
-      now.toLocaleTimeString([], {
+    date: now.toLocaleDateString(),
 
-        hour:"2-digit",
+    timestamp: Date.now()
+  });
 
-        minute:"2-digit"
+  /* save last chat */
+  await set(ref(db, "lastChats/" + chatId), {
 
-      }),
-
-    date:
-      now.toLocaleDateString(),
-
-    timestamp:
-      Date.now()
+    users: [currentUser.uid, currentChatUser.uid],
+    lastMessage: text,
+    time: Date.now()
   });
 
   messageInput.value = "";
 };
 
-/* LOAD MESSAGES */
+/* =======================
+   LOAD MESSAGES
+======================= */
 
-function loadMessages(){
+function loadMessages() {
 
-  messagesDiv.innerHTML = "";
-
-  const chatId = getChatId(
-
-    auth.currentUser.uid,
-
-    currentChatUser.uid
-  );
-
-  if(currentMessagesRef){
-
-    off(currentMessagesRef);
+  if (currentMessagesRef) {
+    currentMessagesRef = null;
   }
 
-  currentMessagesRef =
-    ref(db, "messages/" + chatId);
+  const chatId = getChatId(currentUser.uid, currentChatUser.uid);
 
-  onValue(currentMessagesRef, (snapshot)=>{
+  const messagesRef = ref(db, "messages/" + chatId);
+
+  currentMessagesRef = messagesRef;
+
+  onValue(messagesRef, (snapshot) => {
 
     messagesDiv.innerHTML = "";
 
     const data = snapshot.val();
 
-    if(!data) return;
+    if (!data) return;
 
-    Object.values(data).forEach((msg)=>{
+    Object.values(data).forEach((msg) => {
 
-      const div =
-        document.createElement("div");
+      const div = document.createElement("div");
+      div.className = "message";
 
-      div.classList.add("message");
-
-      if(
-        msg.sender === auth.currentUser.uid
-      ){
-
+      if (msg.sender === currentUser.uid) {
         div.classList.add("me");
-
-      }else{
-
+      } else {
         div.classList.add("other");
       }
 
       div.innerHTML = `
-
         ${msg.text}
-
-        <div class="time">
-
-          ${msg.time}
-
-        </div>
-
+        <div class="time">${msg.time}</div>
       `;
 
       messagesDiv.appendChild(div);
     });
 
-    messagesDiv.scrollTop =
-      messagesDiv.scrollHeight;
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
   });
 }
 
-/* SEARCH */
+/* =======================
+   LOGOUT
+======================= */
 
-searchInput.oninput = ()=>{
-
-  const value =
-    searchInput.value.toLowerCase();
-
-  const users =
-    document.querySelectorAll(".user");
-
-  users.forEach((user)=>{
-
-    if(
-      user.innerText
-      .toLowerCase()
-      .includes(value)
-    ){
-
-      user.style.display = "block";
-
-    }else{
-
-      user.style.display = "none";
-    }
-  });
-};
-
-/* LOGOUT */
-
-logoutBtn.onclick = ()=>{
-
+logoutBtn.onclick = () => {
   signOut(auth);
 };
