@@ -11,141 +11,76 @@ import {
   ref,
   set,
   push,
-  onValue
+  onValue,
+  get
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-/* =======================
-   ELEMENTS
-======================= */
+/* ELEMENTS */
 
 const authPage = document.getElementById("authPage");
 const chatApp = document.getElementById("chatApp");
-
-const signupBtn = document.getElementById("signupBtn");
-const loginBtn = document.getElementById("loginBtn");
-const logoutBtn = document.getElementById("logoutBtn");
 
 const usersList = document.getElementById("usersList");
 const messagesDiv = document.getElementById("messages");
 
 const messageInput = document.getElementById("messageInput");
+const imageInput = document.getElementById("imageInput");
+
 const sendBtn = document.getElementById("sendBtn");
 
-const chatUsername = document.getElementById("chatUsername");
 const searchInput = document.getElementById("searchInput");
+const chatUsername = document.getElementById("chatUsername");
 
-/* =======================
-   GLOBAL STATE
-======================= */
+const logoutBtn = document.getElementById("logoutBtn");
+const toggleSidebar = document.getElementById("toggleSidebar");
+
+/* STATE */
 
 let currentUser = null;
-let currentChatUser = null;
-let currentMessagesRef = null;
+let currentChat = null;
 
-/* =======================
-   SIGN UP
-======================= */
+/* TOGGLE SIDEBAR */
 
-signupBtn.onclick = async () => {
-
-  const username = document.getElementById("username").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
-
-  if (!username || !email || !password) {
-    alert("Fill all fields");
-    return;
-  }
-
-  try {
-    const userCred = await createUserWithEmailAndPassword(auth, email, password);
-
-    await set(ref(db, "users/" + userCred.user.uid), {
-      uid: userCred.user.uid,
-      username,
-      email
-    });
-
-    alert("Account Created");
-  } catch (err) {
-    alert(err.message);
-  }
+toggleSidebar.onclick = () => {
+  document.querySelector(".sidebar").classList.toggle("hidden");
 };
 
-/* =======================
-   LOGIN
-======================= */
-
-loginBtn.onclick = async () => {
-
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
-
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-  } catch (err) {
-    alert(err.message);
-  }
-};
-
-/* =======================
-   AUTH STATE
-======================= */
+/* AUTH */
 
 onAuthStateChanged(auth, (user) => {
-
   if (user) {
-
     currentUser = user;
-
     authPage.style.display = "none";
     chatApp.style.display = "flex";
-
     loadUsers();
-
   } else {
-
-    currentUser = null;
-
     authPage.style.display = "flex";
     chatApp.style.display = "none";
   }
 });
 
-/* =======================
-   LOAD USERS (HIDDEN BY DEFAULT)
-======================= */
+/* USERS */
 
 function loadUsers() {
-
   const usersRef = ref(db, "users");
 
-  onValue(usersRef, (snapshot) => {
-
+  onValue(usersRef, (snap) => {
     usersList.innerHTML = "";
 
-    const data = snapshot.val();
-
+    const data = snap.val();
     if (!data) return;
 
-    Object.values(data).forEach((user) => {
-
-      if (user.uid === currentUser.uid) return;
+    Object.values(data).forEach((u) => {
+      if (u.uid === currentUser.uid) return;
 
       const div = document.createElement("div");
       div.className = "user";
-
-      div.style.display = "none"; // ❌ hidden by default
-
-      div.innerHTML = `<b>${user.username}</b>`;
+      div.innerText = u.username;
 
       div.onclick = () => {
-
-        currentChatUser = user;
-        chatUsername.innerText = user.username;
-
+        currentChat = u;
+        chatUsername.innerText = u.username;
         loadMessages();
-
       };
 
       usersList.appendChild(div);
@@ -153,123 +88,76 @@ function loadUsers() {
   });
 }
 
-/* =======================
-   SEARCH USERS (ONLY SHOW WHEN TYPING)
-======================= */
+/* CHAT ID */
 
-searchInput.oninput = () => {
-
-  const value = searchInput.value.trim().toLowerCase();
-
-  const users = document.querySelectorAll(".user");
-
-  users.forEach((u) => {
-
-    const text = u.innerText.toLowerCase();
-
-    if (value === "") {
-      u.style.display = "none";
-    } else if (text.includes(value)) {
-      u.style.display = "block";
-    } else {
-      u.style.display = "none";
-    }
-  });
-};
-
-/* =======================
-   CHAT ID
-======================= */
-
-function getChatId(uid1, uid2) {
+function chatId(uid1, uid2) {
   return [uid1, uid2].sort().join("_");
 }
 
-/* =======================
-   SEND MESSAGE
-======================= */
+/* SEND */
 
 sendBtn.onclick = async () => {
-
-  if (!currentChatUser) {
-    alert("Select user first");
-    return;
-  }
+  if (!currentChat) return;
 
   const text = messageInput.value.trim();
+  const file = imageInput.files[0];
 
-  if (!text) return;
+  const id = chatId(currentUser.uid, currentChat.uid);
 
-  const chatId = getChatId(currentUser.uid, currentChatUser.uid);
+  const msgRef = ref(db, "messages/" + id);
 
-  const messagesRef = ref(db, "messages/" + chatId);
-
-  const now = new Date();
-
-  await push(messagesRef, {
-
-    text,
+  const data = {
     sender: currentUser.uid,
+    text: text || "",
+    time: new Date().toLocaleTimeString(),
+    ts: Date.now()
+  };
 
-    time: now.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit"
-    }),
+  /* IMAGE SUPPORT */
+  if (file) {
+    const reader = new FileReader();
 
-    date: now.toLocaleDateString(),
+    reader.onload = async () => {
+      data.image = reader.result;
+      await push(msgRef, data);
+    };
 
-    timestamp: Date.now()
-  });
-
-  /* save last chat */
-  await set(ref(db, "lastChats/" + chatId), {
-
-    users: [currentUser.uid, currentChatUser.uid],
-    lastMessage: text,
-    time: Date.now()
-  });
-
-  messageInput.value = "";
-};
-
-/* =======================
-   LOAD MESSAGES
-======================= */
-
-function loadMessages() {
-
-  if (currentMessagesRef) {
-    currentMessagesRef = null;
+    reader.readAsDataURL(file);
+  } else {
+    await push(msgRef, data);
   }
 
-  const chatId = getChatId(currentUser.uid, currentChatUser.uid);
+  messageInput.value = "";
+  imageInput.value = "";
+};
 
-  const messagesRef = ref(db, "messages/" + chatId);
+/* LOAD MESSAGES */
 
-  currentMessagesRef = messagesRef;
+function loadMessages() {
+  const id = chatId(currentUser.uid, currentChat.uid);
+  const msgRef = ref(db, "messages/" + id);
 
-  onValue(messagesRef, (snapshot) => {
-
+  onValue(msgRef, (snap) => {
     messagesDiv.innerHTML = "";
 
-    const data = snapshot.val();
-
+    const data = snap.val();
     if (!data) return;
 
-    Object.values(data).forEach((msg) => {
+    /* SORT BY TIME */
+    const sorted = Object.values(data).sort((a, b) => a.ts - b.ts);
 
+    sorted.forEach((m) => {
       const div = document.createElement("div");
       div.className = "message";
 
-      if (msg.sender === currentUser.uid) {
-        div.classList.add("me");
-      } else {
-        div.classList.add("other");
-      }
+      div.classList.add(
+        m.sender === currentUser.uid ? "me" : "other"
+      );
 
       div.innerHTML = `
-        ${msg.text}
-        <div class="time">${msg.time}</div>
+        ${m.text ? `<div>${m.text}</div>` : ""}
+        ${m.image ? `<img src="${m.image}">` : ""}
+        <div class="time">${m.time}</div>
       `;
 
       messagesDiv.appendChild(div);
@@ -279,10 +167,18 @@ function loadMessages() {
   });
 }
 
-/* =======================
-   LOGOUT
-======================= */
+/* SEARCH */
 
-logoutBtn.onclick = () => {
-  signOut(auth);
+searchInput.oninput = () => {
+  const val = searchInput.value.toLowerCase();
+
+  document.querySelectorAll(".user").forEach((u) => {
+    u.style.display = u.innerText.toLowerCase().includes(val)
+      ? "block"
+      : "none";
+  });
 };
+
+/* LOGOUT */
+
+logoutBtn.onclick = () => signOut(auth);
