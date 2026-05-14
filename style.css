@@ -1,0 +1,38 @@
+body{
+  margin:0;
+  font-family:Arial;
+  background:#0b141a;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  color:white;
+}
+
+.auth-box{
+  background:#202c33;
+  padding:30px;
+  border-radius:20px;
+  width:300px;
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+input{
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:#2a3942;
+  color:white;
+}
+
+button{
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:#00a884;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
