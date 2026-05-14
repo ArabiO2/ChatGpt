@@ -8,12 +8,13 @@ import { getFirestore } from
 "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_BUCKET",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyCwWRmlOFseHZcTiPR_kCrPtzTlYmLQDD8",
+  authDomain: "chat-chatgpt-e563b.firebaseapp.com",
+  databaseURL: "https://chat-chatgpt-e563b-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "chat-chatgpt-e563b",
+  storageBucket: "chat-chatgpt-e563b.firebasestorage.app",
+  messagingSenderId: "723794240056",
+  appId: "1:723794240056:web:804e87524c21ec470bfccd"
 };
 
 const app = initializeApp(firebaseConfig);
