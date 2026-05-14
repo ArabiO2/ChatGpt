@@ -23,7 +23,7 @@ import {
 
   onValue,
 
-  get
+  off
 
 } from
 "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -67,6 +67,8 @@ const searchInput =
 
 let currentChatUser = null;
 
+let currentMessagesRef = null;
+
 /* SIGNUP */
 
 signupBtn.onclick = async ()=>{
@@ -107,10 +109,12 @@ signupBtn.onclick = async ()=>{
       );
 
     await set(
+
       ref(
         db,
         "users/" + userCred.user.uid
       ),
+
       {
         uid:userCred.user.uid,
         username,
@@ -202,7 +206,9 @@ function loadUsers(){
       div.className = "user";
 
       div.innerHTML = `
+
         <b>${user.username}</b>
+
       `;
 
       div.onclick = ()=>{
@@ -213,13 +219,6 @@ function loadUsers(){
           user.username;
 
         loadMessages();
-
-        if(window.innerWidth < 800){
-
-          document.querySelector(
-            ".sidebar"
-          ).style.display = "none";
-        }
       };
 
       usersList.appendChild(div);
@@ -242,7 +241,7 @@ sendBtn.onclick = async ()=>{
 
   if(!currentChatUser){
 
-    alert("Select user first");
+    alert("Select a user");
 
     return;
   }
@@ -273,7 +272,13 @@ sendBtn.onclick = async ()=>{
       auth.currentUser.uid,
 
     time:
-      now.toLocaleTimeString(),
+      now.toLocaleTimeString([], {
+
+        hour:"2-digit",
+
+        minute:"2-digit"
+
+      }),
 
     date:
       now.toLocaleDateString(),
@@ -289,6 +294,8 @@ sendBtn.onclick = async ()=>{
 
 function loadMessages(){
 
+  messagesDiv.innerHTML = "";
+
   const chatId = getChatId(
 
     auth.currentUser.uid,
@@ -296,10 +303,15 @@ function loadMessages(){
     currentChatUser.uid
   );
 
-  const messagesRef =
+  if(currentMessagesRef){
+
+    off(currentMessagesRef);
+  }
+
+  currentMessagesRef =
     ref(db, "messages/" + chatId);
 
-  onValue(messagesRef, (snapshot)=>{
+  onValue(currentMessagesRef, (snapshot)=>{
 
     messagesDiv.innerHTML = "";
 
@@ -333,11 +345,8 @@ function loadMessages(){
 
           ${msg.time}
 
-          <br>
-
-          ${msg.date}
-
         </div>
+
       `;
 
       messagesDiv.appendChild(div);
