@@ -58,7 +58,7 @@
 <!-- CHAT -->
 
 <div class="chat-app" id="chatApp">
-
+<button id="toggleSidebar" class="menu-btn">☰</button>
   <!-- SIDEBAR -->
 
   <div class="sidebar">
@@ -105,21 +105,17 @@
 
     <div class="send-box">
 
-      <input
-        type="text"
-        id="messageInput"
-        placeholder="Type message..."
-      >
+  <input type="text" id="messageInput" placeholder="Type message...">
 
-      <button id="sendBtn">
-        Send
-      </button>
+  <input type="file" id="imageInput" accept="image/*">
+
+  <button id="sendBtn">Send</button>
 
     </div>
 
   </div>
 
-</div>
+
 
 <script type="module" src="app.js"></script>
 
