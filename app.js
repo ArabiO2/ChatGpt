@@ -21,7 +21,9 @@ import {
 
   push,
 
-  onValue
+  onValue,
+
+  get
 
 } from
 "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -65,18 +67,35 @@ const searchInput =
 
 let currentChatUser = null;
 
-/* SIGN UP */
+/* SIGNUP */
 
 signupBtn.onclick = async ()=>{
 
   const username =
-    document.getElementById("username").value;
+    document.getElementById("username")
+    .value
+    .trim();
 
   const email =
-    document.getElementById("email").value;
+    document.getElementById("email")
+    .value
+    .trim();
 
   const password =
-    document.getElementById("password").value;
+    document.getElementById("password")
+    .value
+    .trim();
+
+  if(
+    !username ||
+    !email ||
+    !password
+  ){
+
+    alert("Fill all fields");
+
+    return;
+  }
 
   try{
 
@@ -88,7 +107,10 @@ signupBtn.onclick = async ()=>{
       );
 
     await set(
-      ref(db, "users/" + userCred.user.uid),
+      ref(
+        db,
+        "users/" + userCred.user.uid
+      ),
       {
         uid:userCred.user.uid,
         username,
@@ -109,10 +131,14 @@ signupBtn.onclick = async ()=>{
 loginBtn.onclick = async ()=>{
 
   const email =
-    document.getElementById("email").value;
+    document.getElementById("email")
+    .value
+    .trim();
 
   const password =
-    document.getElementById("password").value;
+    document.getElementById("password")
+    .value
+    .trim();
 
   try{
 
@@ -128,7 +154,7 @@ loginBtn.onclick = async ()=>{
   }
 };
 
-/* AUTH STATE */
+/* AUTH */
 
 onAuthStateChanged(auth, (user)=>{
 
@@ -167,6 +193,9 @@ function loadUsers(){
       if(user.uid === auth.currentUser.uid)
         return;
 
+      if(!user.username)
+        return;
+
       const div =
         document.createElement("div");
 
@@ -184,6 +213,13 @@ function loadUsers(){
           user.username;
 
         loadMessages();
+
+        if(window.innerWidth < 800){
+
+          document.querySelector(
+            ".sidebar"
+          ).style.display = "none";
+        }
       };
 
       usersList.appendChild(div);
@@ -206,7 +242,7 @@ sendBtn.onclick = async ()=>{
 
   if(!currentChatUser){
 
-    alert("Select a user first");
+    alert("Select user first");
 
     return;
   }
@@ -296,7 +332,9 @@ function loadMessages(){
         <div class="time">
 
           ${msg.time}
+
           <br>
+
           ${msg.date}
 
         </div>
