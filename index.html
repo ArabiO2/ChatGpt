@@ -1,65 +1,459 @@
+<!-- index.html -->
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AuraChat | أورا شات</title>
-  <link rel="stylesheet" href="style.css">
-  <!-- خط كايرو عشان الشياكة -->
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ChatterBox</title>
+
+  <link rel="stylesheet" href="style.css"/>
+
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  />
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
 </head>
+
 <body>
 
-<!-- صفحة تسجيل الدخول -->
-<div class="auth-page" id="authPage">
-  <div class="auth-box">
-    <h1>AuraChat</h1>
-    <input type="text" id="username" placeholder="اسم المستخدم">
-    <input type="email" id="email" placeholder="البريد الإلكتروني">
-    <input type="password" id="password" placeholder="كلمة المرور">
-    <div class="auth-buttons">
-        <button id="loginBtn" class="primary">دخول</button>
-        <button id="signupBtn" class="secondary">إنشاء حساب</button>
+  <!-- ========================= -->
+  <!-- AUTH OVERLAY -->
+  <!-- ========================= -->
+
+  <div class="auth-overlay">
+
+    <div class="auth-card">
+
+      <div class="auth-logo">
+        <div class="logo-glow"></div>
+        <h1>ChatterBox</h1>
+        <p>Real-Time Futuristic Communication</p>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="tab-btn active">Login</button>
+        <button class="tab-btn">Register</button>
+      </div>
+
+      <form class="auth-form">
+
+        <div class="input-group">
+          <label>Email</label>
+          <input type="email" placeholder="you@example.com">
+        </div>
+
+        <div class="input-group">
+          <label>Password</label>
+          <input type="password" placeholder="••••••••">
+        </div>
+
+        <div class="input-group">
+          <label>Username</label>
+          <input type="text" placeholder="@username">
+        </div>
+
+        <button class="auth-submit">
+          Enter ChatterBox
+        </button>
+
+      </form>
+
     </div>
+
   </div>
+
+  <!-- ========================= -->
+  <!-- MAIN APP -->
+  <!-- ========================= -->
+
+  <main class="app-shell">
+
+    <!-- ========================= -->
+    <!-- LEFT SIDEBAR -->
+    <!-- ========================= -->
+
+    <aside class="sidebar">
+
+      <div class="sidebar-top">
+
+        <div class="brand-area">
+          <div class="brand-icon"></div>
+
+          <div>
+            <h2>ChatterBox</h2>
+            <span>Online Now</span>
+          </div>
+        </div>
+
+        <div class="search-box">
+
+          <svg viewBox="0 0 24 24">
+            <path d="M21 21L15.8 15.8M18 10.5C18 14.6421 14.6421 18 10.5 18C6.35786 18 3 14.6421 3 10.5C3 6.35786 6.35786 3 10.5 3C14.6421 3 18 6.35786 18 10.5Z"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"/>
+          </svg>
+
+          <input
+            type="text"
+            placeholder="Search users..."
+          />
+
+        </div>
+
+      </div>
+
+      <div class="chat-list">
+
+        <div class="chat-user active">
+
+          <div class="avatar">
+            A
+            <span class="online-dot"></span>
+          </div>
+
+          <div class="chat-user-info">
+            <h4>Alex Carter</h4>
+            <p>Sent an image</p>
+          </div>
+
+          <div class="chat-meta">
+            <span>2m</span>
+            <div class="unread">3</div>
+          </div>
+
+        </div>
+
+        <div class="chat-user">
+
+          <div class="avatar purple">
+            S
+            <span class="online-dot"></span>
+          </div>
+
+          <div class="chat-user-info">
+            <h4>Sarah Smith</h4>
+            <p>Let's deploy tonight.</p>
+          </div>
+
+          <div class="chat-meta">
+            <span>10m</span>
+          </div>
+
+        </div>
+
+        <div class="chat-user">
+
+          <div class="avatar orange">
+            M
+          </div>
+
+          <div class="chat-user-info">
+            <h4>Mike Dev</h4>
+            <p>Uploaded project.zip</p>
+          </div>
+
+          <div class="chat-meta">
+            <span>1h</span>
+          </div>
+
+        </div>
+
+        <div class="chat-user">
+
+          <div class="avatar teal">
+            E
+            <span class="online-dot"></span>
+          </div>
+
+          <div class="chat-user-info">
+            <h4>Emma Wilson</h4>
+            <p>See you later 👋</p>
+          </div>
+
+          <div class="chat-meta">
+            <span>3h</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </aside>
+
+    <!-- ========================= -->
+    <!-- CHAT SECTION -->
+    <!-- ========================= -->
+
+    <section class="chat-section">
+
+      <!-- TOP BAR -->
+
+      <header class="chat-header">
+<!-- ADD THIS INSIDE .chat-header -->
+
+<div class="chat-room-status">
+
+  <span class="room-id-label">
+    Secure Room
+  </span>
+
+  <span class="room-id-value">
+    Waiting...
+  </span>
+
 </div>
+        <div class="chat-user-header">
 
-<!-- تطبيق الشات الأساسي -->
-<div class="chat-app" id="chatApp" style="display: none;">
-  <button id="toggleSidebar" class="menu-btn">☰</button>
-  
-  <!-- القائمة الجانبية (الأصدقاء) -->
-  <div class="sidebar">
-    <div class="sidebar-top">
-      <h2>المحادثات</h2>
-      <button id="logoutBtn" class="logout-btn">خروج</button>
-    </div>
-    <input type="text" id="searchInput" placeholder="بحث عن مستخدم...">
-    <div class="users-list" id="usersList"></div>
-  </div>
+          <div class="avatar large">
+            A
+          </div>
 
-  <!-- منطقة المحادثة -->
-  <div class="chat-area">
-    <div class="chat-top">
-      <h3 id="chatUsername">اختر مستخدم لبدء الدردشة</h3>
-    </div>
+          <div>
+            <h3>Alex Carter</h3>
+            <span>Typing...</span>
+          </div>
 
-    <div class="messages" id="messages">
-        <!-- الرسائل هتنزل هنا -->
-    </div>
+        </div>
 
-    <!-- زرار السكرول الذكي (مخفي وهيظهر بالـ JS) -->
-    <button id="smart-scroll-btn" class="scroll-btn">↓</button>
+        <div class="header-actions">
 
-    <div class="send-box">
-        <label for="imageInput" class="attach-btn">📎</label>
-        <input type="file" id="imageInput" accept="image/*" style="display: none;">
-        <input type="text" id="messageInput" placeholder="اكتب رسالة...">
-        <button id="sendBtn">إرسال</button>
-    </div>
-  </div>
-</div>
+          <button>
+            📞
+          </button>
 
-<script type="module" src="app.js"></script>
+          <button>
+            🎥
+          </button>
+
+          <button>
+            ⋮
+          </button>
+
+        </div>
+
+      </header>
+
+      <!-- MESSAGES -->
+
+      <div class="messages-container">
+
+        <div class="message incoming">
+
+          <div class="message-bubble">
+            Yo! Check out this UI concept 🚀
+          </div>
+
+          <span class="message-time">
+            7:10 PM
+          </span>
+
+        </div>
+
+        <div class="message outgoing">
+
+          <div class="message-bubble">
+            This looks insane 🔥
+          </div>
+
+          <span class="message-time">
+            7:11 PM
+          </span>
+
+        </div>
+
+        <div class="message incoming image-message">
+
+          <div class="message-bubble">
+
+            <img
+              src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop"
+              alt=""
+            />
+
+          </div>
+
+          <span class="message-time">
+            7:12 PM
+          </span>
+
+        </div>
+
+        <div class="message outgoing file-message">
+
+          <div class="message-bubble file-bubble">
+
+            <div class="file-icon">
+              📄
+            </div>
+
+            <div>
+              <h5>Design-System.pdf</h5>
+              <span>2.4 MB</span>
+            </div>
+
+          </div>
+
+          <span class="message-time">
+            7:15 PM
+          </span>
+
+        </div>
+
+      </div>
+
+      <!-- INPUT -->
+
+      <div class="message-input-area">
+
+        <label for="fileInput" class="attach-btn">
+  ＋
+        </label>
+<input type="file" id="fileInput" hidden />
+        <input
+          type="text"
+          placeholder="Type a message..."
+        />
+
+        <button class="send-btn">
+          ➤
+        </button>
+
+      </div>
+
+    </section>
+
+    <!-- ========================= -->
+    <!-- MEDIA HUB -->
+    <!-- ========================= -->
+
+    <aside class="media-hub">
+
+      <div class="media-header">
+        <h3>Shared Media</h3>
+        <p>Telegram-style intelligent parser</p>
+      </div>
+
+      <div class="media-tabs">
+
+        <button class="media-tab active">
+          Images
+        </button>
+
+        <button class="media-tab">
+          Files
+        </button>
+
+        <button class="media-tab">
+          Links
+        </button>
+
+      </div>
+
+      <!-- IMAGES -->
+
+      <div class="media-content">
+
+        <div class="image-grid">
+
+          <div class="image-card">
+            <img
+              src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1200&auto=format&fit=crop"
+              alt=""
+            />
+          </div>
+
+          <div class="image-card">
+            <img
+              src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop"
+              alt=""
+            />
+          </div>
+
+          <div class="image-card">
+            <img
+              src="https://images.unsplash.com/photo-1526379095098-d400fd0bf935?q=80&w=1200&auto=format&fit=crop"
+              alt=""
+            />
+          </div>
+
+          <div class="image-card">
+            <img
+              src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1200&auto=format&fit=crop"
+              alt=""
+            />
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- FILES -->
+
+      <div class="files-section">
+
+        <div class="shared-file">
+
+          <div class="shared-file-icon">
+            📦
+          </div>
+
+          <div>
+            <h5>project-build.zip</h5>
+            <span>18.3 MB</span>
+          </div>
+
+        </div>
+
+        <div class="shared-file">
+
+          <div class="shared-file-icon">
+            📄
+          </div>
+
+          <div>
+            <h5>ui-guidelines.pdf</h5>
+            <span>4.2 MB</span>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- LINKS -->
+
+      <div class="links-section">
+
+        <a href="#">
+          https://github.com/example/project
+        </a>
+
+        <a href="#">
+          https://dribbble.com/shots/ui-concept
+        </a>
+
+      </div>
+
+    </aside>
+
+  </main>
+<!-- Add these script tags before </body> in index.html -->
+
+<script type="module" src="firebase.js"></script>
+<script type="module" src="auth.js"></script>
+    <!-- ADD THIS SCRIPT TAG AFTER auth.js -->
+<script type="module" src="chat.js"></script>
+  <!-- ADD THIS SCRIPT TAG AFTER chat.js -->
+
+<script type="module" src="mediaHub.js" ></script>
 </body>
-</html>
+            </html>
