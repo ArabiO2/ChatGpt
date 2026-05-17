@@ -1,3 +1,29 @@
+/* style.css */
+
+:root {
+
+  --bg-deep: #0a0e17;
+  --bg-card: #111827;
+  --bg-soft: #161f2e;
+
+  --border-soft: rgba(255,255,255,0.06);
+
+  --text-main: #f5f7ff;
+  --text-soft: #8fa3c3;
+
+  --accent-teal: #00f2fe;
+  --accent-blue: #4facfe;
+  --accent-purple: #7c4dff;
+
+  --shadow-glow:
+    0 0 25px rgba(0,242,254,0.08);
+
+  --radius-lg: 22px;
+  --radius-md: 16px;
+  --radius-sm: 12px;
+
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -5,350 +31,1455 @@
 }
 
 body {
-  font-family: 'Cairo', sans-serif; /* خط كايرو اللي ضفناه في الـ HTML */
-  background: #0b141a; /* لون خلفية واتساب الأساسي */
-  color: #e9edef;
+
+  font-family: 'Inter', sans-serif;
+  background:
+    radial-gradient(circle at top left,
+      rgba(0,242,254,0.07),
+      transparent 20%),
+    radial-gradient(circle at bottom right,
+      rgba(124,77,255,0.07),
+      transparent 20%),
+    var(--bg-deep);
+
+  color: var(--text-main);
+
   height: 100vh;
   overflow: hidden;
-  direction: rtl; /* مهم جداً عشان الشات بالعربي */
+
 }
 
-/* شريط التمرير (Scrollbar) عشان يكون شكله احترافي */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #374045; border-radius: 10px; }
+/* ========================= */
+/* AUTH OVERLAY */
+/* ========================= */
 
-/* =====================
-   AUTH (صفحة الدخول)
-===================== */
-.auth-page {
-  height: 100vh;
+.auth-overlay {
+
+  position: fixed;
+  inset: 0;
+
+  background:
+    rgba(4,7,12,0.85);
+
+  backdrop-filter: blur(12px);
+
   display: flex;
-  justify-content: center;
   align-items: center;
-  padding: 16px;
-  background: #0b141a;
+  justify-content: center;
+
+  z-index: 999;
+
 }
 
-.auth-box {
-  width: 100%;
-  max-width: 380px;
-  background: #111b21;
-  padding: 30px 25px;
-  border-radius: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4); /* ظل فخم */
+.auth-card {
+
+  width: 420px;
+
+  background: rgba(17,24,39,0.95);
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+
+  border-radius: 28px;
+
+  padding: 40px;
+
+  box-shadow:
+    var(--shadow-glow);
+
 }
 
-.auth-box h1 {
+.auth-logo {
+
   text-align: center;
-  font-size: 26px;
-  margin-bottom: 5px;
-  color: #00a884; /* لون براند أورا شات */
+  margin-bottom: 30px;
+
 }
 
-/* =====================
-   INPUTS / BUTTONS
-===================== */
-input {
-  width: 100%;
-  padding: 14px;
-  border: 1px solid #2a3942;
-  border-radius: 10px;
-  background: #202c33;
-  color: #fff;
-  outline: none;
-  font-size: 14px;
-  font-family: inherit;
-  transition: 0.3s;
+.logo-glow {
+
+  width: 80px;
+  height: 80px;
+
+  margin: 0 auto 20px;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--accent-teal),
+      var(--accent-purple)
+    );
+
+  box-shadow:
+    0 0 50px rgba(0,242,254,0.4);
+
 }
 
-input:focus {
-  border-color: #00a884;
+.auth-logo h1 {
+
+  font-size: 34px;
+  margin-bottom: 8px;
+
 }
 
-.auth-buttons {
+.auth-logo p {
+
+  color: var(--text-soft);
+
+}
+
+.auth-tabs {
+
   display: flex;
   gap: 10px;
-  margin-top: 10px;
+
+  margin-bottom: 30px;
+
 }
 
-button {
-  padding: 12px;
-  border: none;
-  border-radius: 10px;
-  font-weight: bold;
-  font-family: inherit;
+.tab-btn {
+
+  flex: 1;
+
+  background: transparent;
+
+  color: var(--text-soft);
+
+  border:
+    1px solid var(--border-soft);
+
+  padding: 14px;
+
+  border-radius: 14px;
+
   cursor: pointer;
-  font-size: 15px;
-  transition: 0.2s;
+
+  transition: 0.3s;
+
 }
 
-button.primary, #sendBtn { background: #00a884; color: #111b21; }
-button.primary:hover, #sendBtn:hover { background: #008f6f; }
+.tab-btn.active {
 
-button.secondary { background: #202c33; color: #00a884; flex: 1; }
-button.secondary:hover { background: #2a3942; }
+  background:
+    linear-gradient(
+      135deg,
+      var(--accent-teal),
+      var(--accent-blue)
+    );
 
-#loginBtn { flex: 1; }
+  color: #000;
+  border: none;
+  font-weight: 700;
 
-/* =====================
-   APP LAYOUT
-===================== */
-.chat-app {
-  display: flex; /* هنخلي الـ JS يتحكم في إظهارها بس هي Flex أساساً */
-  height: 100vh;
-  width: 100%;
-  position: fixed;
-  top :0;
-  left :0;
-  overflow:hidden; 
 }
 
-/* =====================
-   SIDEBAR (القائمة الجانبية)
-===================== */
-.sidebar {
-  width: 320px;
-  min-width: 320px;
-  background: #111b21;
-  border-left: 1px solid #202c33; /* border-left لأننا RTL */
+.auth-form {
+
   display: flex;
   flex-direction: column;
-  z-index: 10;
+  gap: 18px;
+
+}
+
+.input-group {
+
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+}
+
+.input-group label {
+
+  font-size: 14px;
+  color: var(--text-soft);
+
+}
+
+.input-group input {
+
+  background: var(--bg-soft);
+
+  border:
+    1px solid rgba(255,255,255,0.05);
+
+  color: white;
+
+  padding: 16px;
+
+  border-radius: 14px;
+
+  outline: none;
+
+}
+
+.auth-submit {
+
+  margin-top: 10px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--accent-teal),
+      var(--accent-blue)
+    );
+
+  border: none;
+
+  color: #000;
+
+  font-weight: 700;
+
+  padding: 16px;
+
+  border-radius: 16px;
+
+  cursor: pointer;
+
+}
+
+/* ========================= */
+/* APP LAYOUT */
+/* ========================= */
+
+.app-shell {
+
+  display: grid;
+
+  grid-template-columns:
+    340px
+    1fr
+    320px;
+
+  height: 100vh;
+
+}
+
+/* ========================= */
+/* SIDEBAR */
+/* ========================= */
+
+.sidebar {
+
+  border-right:
+    1px solid var(--border-soft);
+
+  background:
+    rgba(255,255,255,0.02);
+
+  backdrop-filter: blur(10px);
+
+  display: flex;
+  flex-direction: column;
+
 }
 
 .sidebar-top {
-  padding: 15px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #202c33;
-  min-height: 65px;
+
+  padding: 24px;
+
+  border-bottom:
+    1px solid var(--border-soft);
+
 }
 
-.sidebar h2 { font-size: 18px; }
+.brand-area {
 
-.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  margin-bottom: 24px;
+
+}
+
+.brand-icon {
+
+  width: 50px;
+  height: 50px;
+
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--accent-teal),
+      var(--accent-purple)
+    );
+
+}
+
+.brand-area span {
+
+  color: var(--text-soft);
+  font-size: 14px;
+
+}
+
+.search-box {
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  background: var(--bg-soft);
+
+  padding: 14px 16px;
+
+  border-radius: 14px;
+
+}
+
+.search-box svg {
+
+  width: 20px;
+  height: 20px;
+
+  stroke: var(--text-soft);
+
+  fill: none;
+
+}
+
+.search-box input {
+
+  width: 100%;
+
   background: transparent;
-  color: #ef5350;
-  padding: 5px;
-  width: auto;
+  border: none;
+  outline: none;
+
+  color: white;
+
 }
 
-#searchInput {
-  margin: 10px 15px;
-  width: calc(100% - 30px);
-  border-radius: 8px;
-  padding: 10px 15px;
-}
+.chat-list {
 
-/* USERS */
-.users-list {
-  flex: 1;
+  padding: 14px;
   overflow-y: auto;
+
 }
 
-.user {
-  padding: 15px 20px;
-  border-bottom: 1px solid #202c33;
+.chat-user {
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 14px;
+
+  padding: 16px;
+
+  border-radius: 18px;
+
   cursor: pointer;
-  font-size: 15px;
-  transition: 0.2s;
-  display: flex;
-  align-items: center;
+
+  transition: 0.3s;
+
+  margin-bottom: 10px;
+
 }
 
-.user:hover { background: #202c33; }
+.chat-user:hover,
+.chat-user.active {
 
-/* =====================
-   CHAT AREA (منطقة الشات)
-===================== */
-.chat-area {
-  flex: 1;
+  background:
+    rgba(255,255,255,0.05);
+
+}
+
+.avatar {
+
+  width: 52px;
+  height: 52px;
+
+  min-width: 52px;
+
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--accent-blue),
+      var(--accent-purple)
+    );
+
   display: flex;
-  flex-direction: column;
-  height:100vh;   
-  min-width: 0;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: 700;
+
   position: relative;
-  background: #0b141a;
+
 }
 
-.chat-top {
-  padding: 10px 15px;
-  background: #202c33;
-  border-bottom: 1px solid #1f2c33;
+.avatar.large {
+
+  width: 60px;
   height: 60px;
+
+}
+
+.avatar.orange {
+  background:
+    linear-gradient(
+      135deg,
+      #ff9966,
+      #ff5e62
+    );
+}
+
+.avatar.purple {
+  background:
+    linear-gradient(
+      135deg,
+      #8e2de2,
+      #4a00e0
+    );
+}
+
+.avatar.teal {
+  background:
+    linear-gradient(
+      135deg,
+      #00f2fe,
+      #4facfe
+    );
+}
+
+.online-dot {
+
+  position: absolute;
+
+  width: 12px;
+  height: 12px;
+
+  background: #00ff85;
+
+  border-radius: 50%;
+
+  right: 2px;
+  bottom: 2px;
+
+  border: 2px solid var(--bg-deep);
+
+}
+
+.chat-user-info {
+
+  flex: 1;
+
+}
+
+.chat-user-info h4 {
+
+  margin-bottom: 4px;
+
+}
+
+.chat-user-info p {
+
+  color: var(--text-soft);
+  font-size: 14px;
+
+}
+
+.chat-meta {
+
+  text-align: right;
+
+}
+
+.chat-meta span {
+
+  font-size: 13px;
+  color: var(--text-soft);
+
+}
+
+.unread {
+
+  margin-top: 6px;
+
+  width: 22px;
+  height: 22px;
+
+  border-radius: 50%;
+
+  background: var(--accent-teal);
+
+  color: #000;
+
   display: flex;
   align-items: center;
-  flex-shrink:0;
-  z-index:10;  
+  justify-content: center;
+
+  font-size: 12px;
+  font-weight: 700;
+
 }
 
-/* MESSAGES */
-.messages {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px;
+/* ========================= */
+/* CHAT AREA */
+/* ========================= */
+
+.chat-section {
+
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  -webkit-overflow-scrolling: touch ;    /* لو حابب تحط خلفية واتساب الخفيفة مستقبلاً هنا مكانها */
+
+}
+
+.chat-header {
+
+  height: 90px;
+
+  border-bottom:
+    1px solid var(--border-soft);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 28px;
+
+}
+
+.chat-user-header {
+
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+}
+
+.chat-user-header span {
+
+  color: var(--accent-teal);
+
+}
+
+.header-actions {
+
+  display: flex;
+  gap: 10px;
+
+}
+
+.header-actions button {
+
+  width: 46px;
+  height: 46px;
+
+  border-radius: 14px;
+
+  border:
+    1px solid var(--border-soft);
+
+  background:
+    rgba(255,255,255,0.03);
+
+  color: white;
+
+  cursor: pointer;
+
+}
+
+.messages-container {
+
+  flex: 1;
+
+  padding: 28px;
+
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+
 }
 
 .message {
-  max-width: 75%;
-  padding: 8px 12px;
-  border-radius: 12px;
-  font-size: 15px;
-  line-height: 1.5;
-  word-break: break-word;
-  position: relative;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.3);
-  user-select: none; /* مهم عشان الـ Double Tap */
-  transition: transform 0.1s;
+
+  display: flex;
+  flex-direction: column;
+
 }
 
-.message:active { transform: scale(0.98); } /* تأثير عند اللمس */
+.message.outgoing {
 
-.me {
-  align-self: flex-start; /* في الـ RTL ده بيخليها يمين */
-  background: #005c4b;
-  border-top-right-radius: 0;
+  align-items: flex-end;
+
 }
 
-.other {
-  align-self: flex-end; /* في الـ RTL ده بيخليها شمال */
-  background: #202c33;
-  border-top-left-radius: 0;
+.message-bubble {
+
+  max-width: 65%;
+
+  padding: 16px 20px;
+
+  border-radius: 22px;
+
+  background: var(--bg-card);
+
+  border:
+    1px solid rgba(255,255,255,0.04);
+
 }
 
-.time {
-  font-size: 11px;
-  opacity: 0.6;
-  margin-top: 4px;
+.message.outgoing .message-bubble {
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--accent-teal),
+      var(--accent-blue)
+    );
+
+  color: #000;
+  font-weight: 500;
+
+}
+
+.message-time {
+
+  margin-top: 8px;
+
+  font-size: 12px;
+
+  color: var(--text-soft);
+
+}
+
+.image-message img {
+
+  width: 320px;
+
+  border-radius: 16px;
+
   display: block;
-  text-align: left;
+
 }
 
-/* IMAGES */
-.message img {
-  max-width: 250px;
-  width: 100%;
-  border-radius: 8px;
-  margin-bottom: 5px;
-  cursor: pointer;
-}
+.file-bubble {
 
-/* =====================
-   SEND BOX & ATTACH (صندوق الإرسال)
-===================== */
-.send-box {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 15px;
-  background: #202c33;
-  min-height:62px ;
-  flex-shrink:0;
-  border-top:1px solid #1f2c33;
+  gap: 16px;
+
+}
+
+.file-icon {
+
+  font-size: 28px;
+
+}
+
+.message-input-area {
+
+  padding: 20px 28px;
+
+  border-top:
+    1px solid var(--border-soft);
+
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+}
+
+.message-input-area input {
+
+  flex: 1;
+
+  background: var(--bg-soft);
+
+  border: none;
+
+  border-radius: 18px;
+
+  padding: 18px;
+
+  color: white;
+
+  outline: none;
+
+}
+
+.attach-btn,
+.send-btn {
+
+  width: 58px;
+  height: 58px;
+
+  border-radius: 18px;
+
+  border: none;
+
+  cursor: pointer;
+
+  font-size: 20px;
+
 }
 
 .attach-btn {
-  font-size: 24px;
-  cursor: pointer;
-  color: #8696a0;
-  transition: 0.3s;
-  padding: 5px;
-}
-.attach-btn:hover { color: #fff; }
 
-.send-box input[type="text"] {
+  background:
+    rgba(255,255,255,0.05);
+
+  color: white;
+
+}
+
+.send-btn {
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--accent-teal),
+      var(--accent-blue)
+    );
+
+  color: #000;
+  font-weight: bold;
+
+}
+
+/* ========================= */
+/* MEDIA HUB */
+/* ========================= */
+
+.media-hub {
+
+  border-left:
+    1px solid var(--border-soft);
+
+  background:
+    rgba(255,255,255,0.02);
+
+  backdrop-filter: blur(10px);
+
+  padding: 24px;
+
+  overflow-y: auto;
+
+}
+
+.media-header {
+
+  margin-bottom: 24px;
+
+}
+
+.media-header p {
+
+  color: var(--text-soft);
+  margin-top: 8px;
+
+}
+
+.media-tabs {
+
+  display: flex;
+  gap: 10px;
+
+  margin-bottom: 24px;
+
+}
+
+.media-tab {
+
   flex: 1;
-  padding: 12px 20px;
-  border-radius: 24px;
-  background: #2a3942;
-  border: none;
-}
 
-#sendBtn {
-  width: auto;
-  padding: 10px 20px;
-  border-radius: 20px;
-}
+  background:
+    rgba(255,255,255,0.03);
 
-/* =====================
-   SCROLL BUTTON (الزرار الذكي)
-===================== */
-.scroll-btn {
-  position: absolute;
-  bottom: 85px;
-  left: 20px;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: #202c33;
-  color: #8696a0;
-  border: none;
-  font-size: 20px;
-  display: none; /* الـ JS هو اللي هيظهره ويخفيه */
-  align-items: center;
-  justify-content: center;
+  border:
+    1px solid var(--border-soft);
+
+  color: var(--text-soft);
+
+  padding: 12px;
+
+  border-radius: 14px;
+
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-  z-index: 100;
-  transition: 0.2s;
+
 }
 
-.scroll-btn:hover { background: #2a3942; color: #fff; }
+.media-tab.active {
 
-/* =====================
-   MENU BUTTON (للموبايل)
-===================== */
-.menu-btn {
-  display: none;
-  position: absolute;
-  top: 15px;
-  right: 15px; /* يمين عشان الـ RTL */
-  z-index: 1000;
-  background: transparent;
-  color: #fff;
+  background:
+    linear-gradient(
+      135deg,
+      var(--accent-teal),
+      var(--accent-blue)
+    );
+
+  color: #000;
   border: none;
-  font-size: 24px;
+  font-weight: 700;
+
 }
+
+.image-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, 1fr);
+
+  gap: 12px;
+
+}
+
+.image-card {
+
+  overflow: hidden;
+  border-radius: 16px;
+
+}
+
+.image-card img {
+
+  width: 100%;
+  height: 140px;
+
+  object-fit: cover;
+
+}
+
+.shared-file {
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 14px;
+
+  background:
+    rgba(255,255,255,0.03);
+
+  border-radius: 16px;
+
+  margin-bottom: 12px;
+
+}
+
+.shared-file-icon {
+
+  font-size: 28px;
+
+}
+
+.shared-file span {
+
+  color: var(--text-soft);
+  font-size: 14px;
+
+}
+
+.links-section {
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  margin-top: 24px;
+
+}
+
+.links-section a {
+
+  text-decoration: none;
+
+  color: var(--accent-teal);
+
+  background:
+    rgba(255,255,255,0.03);
+
+  padding: 14px;
+
+  border-radius: 14px;
+
+  word-break: break-word;
+
+}
+
+/* ========================= */
+/* RESPONSIVE */
+/* ========================= */
+
+@media (max-width: 1200px) {
+
+  .app-shell {
+
+    grid-template-columns:
+      300px
+      1fr;
+
+  }
+
+  .media-hub {
+
+    display: none;
+
+  }
+
+}
+
 @media (max-width: 768px) {
-  .menu-btn {
-    top :12px;
-    
-  } 
-} 
-/* =====================
-   MOBILE RESPONSIVE (الموبايل)
-===================== */
-@media (max-width: 768px) {
-  .menu-btn { display: block; }
 
   .sidebar {
-    position: absolute;
-    right: 0;
-    top: 0;
-    height: 100%;
-    z-index: 999;
-    transform: translateX(0);
-    transition: transform 0.3s ease;
-    box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+
+    display: none;
+
   }
 
-  .sidebar.hidden {
-    transform: translateX(100%); /* بتختفي ناحية اليمين */
+  .app-shell {
+
+    grid-template-columns: 1fr;
+
   }
 
-  .chat-top h3 {
-    margin-right: 40px; /* بنسيب مكان لزرار القائمة ☰ */
+  .message-bubble {
+
+    max-width: 90%;
+
   }
 
-  .chat-area { width: 100%; }
-  .message { max-width: 85%; }
+  .auth-card {
+
+    width: calc(100% - 30px);
+
+  }
+
+}
+/* ADD THESE STYLES TO style.css */
+
+/* ========================= */
+/* EMPTY USERS */
+/* ========================= */
+
+.empty-users {
+
+  padding: 30px;
+
+  text-align: center;
+
+  color: var(--text-soft);
+
+}
+
+/* ========================= */
+/* SCROLLBAR */
+/* ========================= */
+
+::-webkit-scrollbar {
+
+  width: 8px;
+
+}
+
+::-webkit-scrollbar-track {
+
+  background: transparent;
+
+}
+
+::-webkit-scrollbar-thumb {
+
+  background:
+    rgba(255,255,255,0.12);
+
+  border-radius: 20px;
+
+}
+
+/* ========================= */
+/* INPUT PLACEHOLDER */
+/* ========================= */
+
+input::placeholder {
+
+  color:
+    rgba(255,255,255,0.35);
+
+}
+
+/* ========================= */
+/* SMOOTH TRANSITIONS */
+/* ========================= */
+
+.chat-user,
+.media-tab,
+.tab-btn,
+.auth-submit,
+.send-btn,
+.attach-btn {
+
+  transition:
+    all 0.25s ease;
+
+}
+
+.chat-user:hover {
+
+  transform:
+    translateY(-2px);
+
+}
+
+.auth-submit:hover,
+.send-btn:hover {
+
+  transform:
+    translateY(-2px);
+
+  box-shadow:
+    0 0 20px rgba(0,242,254,0.3);
+
+}
+/* ADD THESE STYLES TO style.css */
+
+/* ========================= */
+/* ROOM STATUS */
+/* ========================= */
+
+.chat-room-status {
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: flex-end;
+
+  margin-right: auto;
+
+  margin-left: 40px;
+
+}
+
+.room-id-label {
+
+  font-size: 12px;
+
+  color: var(--text-soft);
+
+  margin-bottom: 4px;
+
+}
+
+.room-id-value {
+
+  font-size: 13px;
+
+  color: var(--accent-teal);
+
+  max-width: 260px;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+
+}
+
+/* ========================= */
+/* EMPTY CHAT */
+/* ========================= */
+
+.empty-chat,
+.chat-loading {
+
+  margin: auto;
+
+  color: var(--text-soft);
+
+  font-size: 15px;
+
+}
+
+/* ========================= */
+/* FILE DOWNLOAD */
+/* ========================= */
+
+.download-btn {
+
+  margin-left: auto;
+
+  text-decoration: none;
+
+  color: white;
+
+  background:
+    rgba(255,255,255,0.08);
+
+  width: 40px;
+
+  height: 40px;
+
+  border-radius: 12px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  transition: 0.25s;
+
+}
+
+.download-btn:hover {
+
+  transform: scale(1.08);
+
+  background:
+    rgba(255,255,255,0.16);
+
+}
+
+.file-info h5 {
+
+  margin-bottom: 4px;
+
+}
+
+.file-info span {
+
+  color: rgba(255,255,255,0.7);
+
+  font-size: 13px;
+
+}
+
+/* ========================= */
+/* IMAGE MESSAGE */
+/* ========================= */
+
+.image-message img {
+
+  max-width: 360px;
+
+  width: 100%;
+
+  border-radius: 18px;
+
+  display: block;
+
+}
+
+/* ========================= */
+/* MESSAGE ANIMATION */
+/* ========================= */
+
+.message {
+
+  animation:
+    messageAppear 0.25s ease;
+
+}
+
+@keyframes messageAppear {
+
+  from {
+
+    opacity: 0;
+
+    transform:
+      translateY(10px);
+
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform:
+      translateY(0);
+
+  }
+
+}
+
+/* ========================= */
+/* FILE INPUT LABEL */
+/* ========================= */
+
+.attach-btn {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+}
+
+/* ========================= */
+/* MOBILE */
+/* ========================= */
+
+@media (max-width: 768px) {
+
+  .chat-room-status {
+
+    display: none;
+
+  }
+
+  .image-message img {
+
+    max-width: 100%;
+
+  }
+
+}
+/* ADD THESE STYLES TO style.css */
+
+/* ========================= */
+/* MEDIA EMPTY */
+/* ========================= */
+
+.media-empty {
+
+  grid-column: 1 / -1;
+
+  padding: 40px 10px;
+
+  text-align: center;
+
+  color: var(--text-soft);
+
+  font-size: 14px;
+
+}
+
+/* ========================= */
+/* SHARED FILES */
+/* ========================= */
+
+.shared-file {
+
+  position: relative;
+
+  overflow: hidden;
+
+}
+
+.shared-file-info {
+
+  flex: 1;
+
+  min-width: 0;
+
+}
+
+.shared-file-info h5 {
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+
+}
+
+.shared-download {
+
+  width: 42px;
+
+  height: 42px;
+
+  min-width: 42px;
+
+  border-radius: 12px;
+
+  background:
+    rgba(255,255,255,0.06);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  text-decoration: none;
+
+  color: white;
+
+  transition: 0.25s;
+
+}
+
+.shared-download:hover {
+
+  transform: scale(1.08);
+
+  background:
+    rgba(255,255,255,0.14);
+
+}
+
+/* ========================= */
+/* IMAGE HOVER */
+/* ========================= */
+
+.image-card {
+
+  cursor: pointer;
+
+  position: relative;
+
+}
+
+.image-card::after {
+
+  content: "View";
+
+  position: absolute;
+
+  inset: 0;
+
+  background:
+    rgba(0,0,0,0.45);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  opacity: 0;
+
+  transition: 0.25s;
+
+  font-weight: 600;
+
+  letter-spacing: 1px;
+
+}
+
+.image-card:hover::after {
+
+  opacity: 1;
+
+}
+
+/* ========================= */
+/* SHARED LINKS */
+/* ========================= */
+
+.shared-link {
+
+  display: block;
+
+  text-decoration: none;
+
+  color: var(--accent-teal);
+
+  background:
+    rgba(255,255,255,0.04);
+
+  border:
+    1px solid rgba(255,255,255,0.05);
+
+  padding: 14px;
+
+  border-radius: 14px;
+
+  word-break: break-word;
+
+  transition: 0.25s;
+
+}
+
+.shared-link:hover {
+
+  transform:
+    translateY(-2px);
+
+  background:
+    rgba(255,255,255,0.08);
+
+}
+
+/* ========================= */
+/* TAB TRANSITIONS */
+/* ========================= */
+
+.files-section,
+.links-section,
+.media-content {
+
+  animation:
+    mediaFade 0.2s ease;
+
+}
+
+@keyframes mediaFade {
+
+  from {
+
+    opacity: 0;
+
+    transform:
+      translateY(8px);
+
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform:
+      translateY(0);
+
+  }
+
+}
+
+/* ========================= */
+/* MEDIA HUB SCROLL */
+/* ========================= */
+
+.media-hub {
+
+  scroll-behavior: smooth;
+
+}
+
+/* ========================= */
+/* IMAGE GRID */
+/* ========================= */
+
+.image-grid img {
+
+  transition:
+    transform 0.25s ease;
+
+}
+
+.image-card:hover img {
+
+  transform: scale(1.05);
+
+}
+
+/* ========================= */
+/* MOBILE */
+/* ========================= */
+
+@media (max-width: 1200px) {
+
+  .media-hub {
+
+    display: none;
+
+  }
+
 }
